@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk" DefaultTargets="BuildIL">
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net8.0</TargetFramework>
+        <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">win-x64</RuntimeIdentifier>
+        <NuGetPackageRoot Condition="'$(NuGetPackageRoot)' == ''">$(UserProfile)\.nuget\packages\</NuGetPackageRoot>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ILFile Include="helloworld.il" />
+        <PackageReference Include="Microsoft.NETCore.ILAsm" Version="9.0.4" PrivateAssets="all" />
+        <None Include="helloworld.il" />
+    </ItemGroup>
+
+    <Target Name="BuildIL">
+        <PropertyGroup>
+            <ILAsmExePath>$(NuGetPackageRoot)runtime.$(RuntimeIdentifier).Microsoft.NETCore.ILAsm\%(PackageReference.Version)\runtimes\$(RuntimeIdentifier)\native\ilasm</ILAsmExePath>
+            <ILAsmExePath Condition="'$(RuntimeIdentifier)' == 'win-x64' Or '$(RuntimeIdentifier)' == 'win-x32'">$(ILAsmExePath).exe</ILAsmExePath>
+        </PropertyGroup>
+
+        <Message Text="Compiling IL code from %(ILFile.Identity)" Importance="High" />
+        <Message Text="Path: $(ILAsmExePath)" Importance="High" />
+        <MakeDir Directories="bin" />
+        <Exec Command="$(ILAsmExePath) %(ILFile.Identity) /OUTPUT=./bin/%(ILFile.Filename).exe /DEBUG /EXE /APPCONTAINER" />
+        <Copy SourceFiles="template.runtimeconfig.json" DestinationFiles="bin\%(ILFile.Filename).runtimeconfig.json" />
+    </Target>
+</Project>

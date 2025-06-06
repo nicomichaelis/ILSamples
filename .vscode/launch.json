@@ -1,0 +1,15 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "coreclr",
+      "request": "launch",
+      "name": "Debug helloworld.exe App",
+      "program": "dotnet",
+      "args": [
+        "${workspaceFolder}/bin/helloworld.exe"
+      ],
+      "preLaunchTask": "build-il"
+    }
+  ]
+}
